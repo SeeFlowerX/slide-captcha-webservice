@@ -5,9 +5,6 @@ import random
 from PIL import Image 
 Image.Image.tostring = Image.Image.tobytes
 
-import matplotlib.pyplot as plt
-import matplotlib.patches as patches
-import matplotlib.image as mpimg
 
 def sample(probs):
     s = sum(probs)
@@ -52,7 +49,7 @@ class METADATA(Structure):
     
 
 # lib = CDLL("/home/pjreddie/documents/darknet/libdarknet.so", RTLD_GLOBAL)
-lib = CDLL("libdarknet.so", RTLD_GLOBAL)
+lib = CDLL("/project/libdarknet.so", RTLD_GLOBAL)
 lib.network_width.argtypes = [c_void_p]
 lib.network_width.restype = c_int
 lib.network_height.argtypes = [c_void_p]
@@ -143,70 +140,8 @@ def detect(net, meta, image, thresh=.5, hier_thresh=.5, nms=.45):
         for i in range(meta.classes):
             if dets[j].prob[i] > 0:
                 b = dets[j].bbox
-                res.append((meta.names[i], dets[j].prob[i], (b.x, b.y, b.w, b.h)))
+                res.append((meta.names[i].decode(), dets[j].prob[i], (b.x, b.y, b.w, b.h)))
     res = sorted(res, key=lambda x: -x[1])
     free_image(im)
     free_detections(dets, num)
     return res
-
-
-def save_predict(img,r):
-    # #get detected image
-    _, ax = plt.subplots(1)
-    image = mpimg.imread(img)
-    ax.imshow(image)
-    for k in range(len(r)):
-        width = r[k][2][2]
-        height = r[k][2][3]
-        center_x = r[k][2][0]
-        center_y = r[k][2][1]
-        bottomLeft_x = center_x - width/2
-        bottomLeft_y = center_y - height/2
-
-        rect = patches.Rectangle((bottomLeft_x, bottomLeft_y), width,
-                                 height, linewidth=1, edgecolor='r', facecolor='none')
-
-        ax.add_patch(rect)
-
-    imagepath = './static/' + img.replace('/','_')
-    plt.show(block=False)
-    plt.savefig(imagepath)
-    plt.close('all') 
-
-
-
-if __name__ == "__main__":
-    img = "1cx5auhwra3t1k3jnks1t.png"
-    # img = "3b2vkjv0y7cmlkwiytsl4.png"
-    # img = '3cvt27ag74mpjje68jo9l.png'
-    # img = "3euc2ifmwwppp6pjj8ymkr.png"
-
-    net = load_net("./cfg/tiny-yolo-obj.cfg", 
-        "./weights/tiny-yolo-obj_900.weights", 0)
-    meta = load_meta("./cfg/detector.data")
-    r = detect(net, meta, img)
-    print(r)
-
-
-    # #get detected image
-    fig,ax = plt.subplots(1)
-    image = mpimg.imread(img)
-    ax.imshow(image)
-    for k in range(len(r)):
-        width =  r[k][2][2]
-        height = r[k][2][3]
-        center_x = r[k][2][0]
-        center_y = r[k][2][1]
-        bottomLeft_x = center_x - width/2
-        bottomLeft_y = center_y - height/2
-        print(bottomLeft_x)
-        print(bottomLeft_y)
-        rect = patches.Rectangle((bottomLeft_x, bottomLeft_y), width, height, linewidth=1, edgecolor='r',facecolor='none')
-
-        ax.add_patch(rect)
-
-    imagepath = './static/' + img
-    # plt.show()
-    plt.savefig(imagepath)
-        
-

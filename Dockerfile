@@ -1,14 +1,25 @@
-FROM conda/miniconda3
+FROM ubuntu:latest
 
-# RUN echo "http://dl-8.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories
-# RUN apk --no-cache --update-cache add gcc gfortran python3 python3-dev py3-pip build-base wget freetype-dev libpng-dev openblas-dev
-# RUN ln -s /usr/include/locale.h /usr/include/xlocale.h
+RUN apt-get update \
+  && apt-get install -y python3-pip python3-dev \
+  && cd /usr/local/bin \
+  && ln -s /usr/bin/python3 python \
+  && pip3 install --upgrade pip
 
 
-# application
+# install requirement
 WORKDIR /project
-ADD ./application/ /project
 COPY requirements.txt /project
 RUN pip install -r requirements.txt
+
+# copy applicaton
+ADD ./application/ /project
+
+
+ENV FLASK_APP=main.py
+
+# Expose the port
+EXPOSE 5000
+
 
 CMD ["python","main.py"]
