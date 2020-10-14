@@ -4,7 +4,6 @@ from config import config
 import tempfile
 from urllib.request import urlretrieve
 from darknet import load_net, load_meta, detect
-from flask_basicauth import BasicAuth
 
 
 net = load_net(config['network']['cfg'].encode('utf-8'),
@@ -13,8 +12,8 @@ meta = load_meta(config['network']['meta'].encode('utf-8'))
 
 
 app = Flask(__name__)
-app.config['BASIC_AUTH_USERNAME'] = 'jerry'
-app.config['BASIC_AUTH_PASSWORD'] = 'love_code'
+# app.config['BASIC_AUTH_USERNAME'] = 'jerry'
+# app.config['BASIC_AUTH_PASSWORD'] = 'love_code'
 
 basic_auth = BasicAuth(app)
 
