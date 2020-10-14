@@ -12,14 +12,8 @@ meta = load_meta(config['network']['meta'].encode('utf-8'))
 
 
 app = Flask(__name__)
-# app.config['BASIC_AUTH_USERNAME'] = 'jerry'
-# app.config['BASIC_AUTH_PASSWORD'] = 'love_code'
-
-basic_auth = BasicAuth(app)
-
 
 @app.route('/detect-center',methods=['POST'])
-@basic_auth.required
 def detect_image():
     img_url = request.form.get('img_url')
 
