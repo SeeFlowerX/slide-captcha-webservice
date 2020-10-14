@@ -1,3 +1,4 @@
+# encoding:utf-8
 from flask import Flask, request
 from flask import jsonify
 from config import config
@@ -12,6 +13,12 @@ meta = load_meta(config['network']['meta'].encode('utf-8'))
 
 
 app = Flask(__name__)
+
+
+@app.route('/')
+def hello_world():
+    return 'Hello, World!'
+
 
 @app.route('/detect-center',methods=['POST'])
 def detect_image():
@@ -34,4 +41,8 @@ def detect_image():
         "has_center":has_center,
         "center":center})
 
-app.run(debug=True,host='0.0.0.0')
+
+
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0')

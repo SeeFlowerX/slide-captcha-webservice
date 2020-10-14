@@ -19,7 +19,7 @@ ADD ./application/ /project
 ENV FLASK_APP=main.py
 
 # Expose the port
-EXPOSE 5000
+EXPOSE 8000
 
 
 CMD ["python","main.py"]
